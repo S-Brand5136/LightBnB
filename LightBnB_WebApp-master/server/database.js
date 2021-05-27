@@ -73,10 +73,14 @@ const addUser =  function({name, email, password}) {
   return pool
   .query(
     `INSERT INTO users (name, email, password)
-    VALUES ($1, $2, $3);`,
+    VALUES ($1, $2, $3) RETURNING *;`,
   [`${name}`, `${email}`, `${password}`])
   .then((result) => {
-    return result
+    const user = result.rows[0]
+    if(user) {
+      return user
+    }
+    return null
   })
   .catch((err) => {
     return err
